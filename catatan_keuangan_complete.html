@@ -1,0 +1,546 @@
+`catatan_keuangan_complete.html`
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Catatan Keuangan</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to bottom, #007bff, #ffffff);
+        color: #333;
+    }
+    header {
+        text-align: center;
+        padding: 50px 0;
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    h1 {
+        font-size: 3rem;
+        margin: 0.2rem 0;
+    }
+    h2 {
+        font-size: 1.5rem;
+        margin: 0.2rem 0 1.5rem 0;
+    }
+    .copyright {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        font-size: 0.8rem;
+        color: white;
+    }
+    button.login-button {
+        padding: 12px 25px;
+        font-size: 1.3rem;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button.login-button:hover {
+        background-color: #218838;
+    }
+    input[type="email"], input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0 15px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 1rem;
+    }
+    .form-container {
+        max-width: 400px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        position: relative;
+    }
+    /* Hamburger menu and main page styling */
+    .hamburger {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 2rem;
+        cursor: pointer;
+        z-index: 1001;
+        user-select: none;
+        color: #007bff;
+    }
+    .menu {
+        display: none;
+        position: fixed;
+        top: 60px;
+        left: 20px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        z-index: 1000;
+        width: 180px;
+    }
+    .menu a {
+        display: block;
+        padding: 12px 15px;
+        text-decoration: none;
+        color: #333;
+        border-bottom: 1px solid #eee;
+    }
+    .menu a:last-child {
+        border-bottom: none;
+    }
+    .menu a:hover {
+        background: #f0f0f0;
+    }
+    #main-page {
+        display: none;
+        padding: 80px 20px 60px 20px;
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        position: relative;
+        min-height: 60vh;
+    }
+    #main-page h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .summary {
+        display: flex;
+        justify-content: space-around;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: #495057;
+    }
+    .summary div {
+        text-align: center;
+    }
+    .income {
+        color: #28a745;
+    }
+    .expense {
+        color: #dc3545;
+    }
+    .balance {
+        color: #007bff;
+        font-weight: bold;
+    }
+    form#record-form > div {
+        margin-bottom: 15px;
+    }
+    form#record-form label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 6px;
+    }
+    form#record-form input, form#record-form select {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    form#record-form button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+    form#record-form button:hover {
+        background-color: #0056b3;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #f8f9fa;
+    }
+    td.amount {
+        text-align: right;
+        font-weight: bold;
+    }
+    td.amount.income {
+        color: #28a745;
+    }
+    td.amount.expense {
+        color: #dc3545;
+    }
+    /* Footer company copyright fixed */
+    .footer-copyright {
+        position: fixed;
+        bottom: 10px;
+        right: 20px;
+        font-size: 0.9rem;
+        color: #666;
+        user-select: none;
+    }
+    /* Style for copy button */
+    #copy-button {
+        margin-top: 10px;
+        padding: 8px 15px;
+        background-color: #17a2b8;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    #copy-button:hover {
+        background-color: #117a8b;
+    }
+    #copy-message {
+        margin-top: 8px;
+        color: green;
+        font-weight: bold;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<!-- Halaman Awal -->
+<header id="home-page" style="height:100vh;">
+    <h1>CATATAN KEUANGAN</h1>
+    <h2>DATA ANDA AMAN DISINI</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/3483/3483178.png" alt="Uang" style="width:120px;margin: 20px 0;" />
+    <button class="login-button" onclick="showLogin()">Login</button>
+    <div class="copyright">COPYRIGHT KELOMPOK 4</div>
+</header>
+
+<!-- Halaman Login -->
+<div id="login-page" class="form-container" style="display:none;">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Gmail" required />
+    <input type="password" id="password" placeholder="Sandi" required />
+    <button class="login-button" onclick="login()">Mulai</button>
+    <div class="copyright">COPYRIGHT KELOMPOK 4</div>
+</div>
+
+<!-- Halaman Utama -->
+<div id="main-page">
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <div class="menu" id="menu">
+        <a href="#" onclick="logout()">Logout</a>
+        <a href="#" onclick="alert('Fitur pengaturan akun belum tersedia')">Setelan Akun</a>
+    </div>
+    <h2>Catat Keuangan</h2>
+    <form id="record-form">
+        <div>
+            <label for="type">Tipe</label>
+            <select id="type" required>
+                <option value="income">Pemasukan</option>
+                <option value="expense">Pengeluaran</option>
+            </select>
+        </div>
+        <div>
+            <label for="description">Keterangan</label>
+            <input type="text" id="description" placeholder="Misal: Gaji, belanja" required />
+        </div>
+        <div>
+            <label for="amount">Jumlah (Rp)</label>
+            <input type="number" id="amount" min="0.01" step="0.01" placeholder="Contoh: 100000" required />
+        </div>
+        <div>
+            <label for="date">Tanggal</label>
+            <input type="date" id="date" required />
+        </div>
+        <button type="submit">Tambah Catatan</button>
+    </form>
+
+    <div class="summary">
+        <div>
+            <div>Pemasukan</div>
+            <div id="total-income" class="income">Rp 0</div>
+        </div>
+        <div>
+            <div>Pengeluaran</div>
+            <div id="total-expense" class="expense">Rp 0</div>
+        </div>
+        <div>
+            <div>Saldo</div>
+            <div id="balance" class="balance">Rp 0</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Tipe</th>
+                <th>Keterangan</th>
+                <th>Jumlah (Rp)</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="records-table-body">
+            <!-- Data keuangan akan ditampilkan di sini -->
+        </tbody>
+    </table>
+
+    <button id="copy-button" title="Salin semua data ke clipboard" onclick="copyAllData()">Salin Semua Data</button>
+    <div id="copy-message">Data berhasil disalin!</div>
+
+    <div class="footer-copyright">COPYRIGHT KELOMPOK 4</div>
+</div>
+
+<script>
+    // Inisialisasi tampilan halaman awal
+    const homePage = document.getElementById('home-page');
+    const loginPage = document.getElementById('login-page');
+    const mainPage = document.getElementById('main-page');
+    const menu = document.getElementById('menu');
+    const hamburger = document.querySelector('.hamburger');
+    const recordsTableBody = document.getElementById('records-table-body');
+
+    // Elemen summary
+    const totalIncomeEl = document.getElementById('total-income');
+    const totalExpenseEl = document.getElementById('total-expense');
+    const balanceEl = document.getElementById('balance');
+
+    // Elemen salin pesan
+    const copyMessage = document.getElementById('copy-message');
+
+    // Data keuangan dan status login disimpan di localStorage
+    let records = JSON.parse(localStorage.getItem('keuanganRecords')) || [];
+    let loggedIn = localStorage.getItem('loggedIn') === 'true';
+
+    // Set tanggal default input tanggal di form
+    document.getElementById('date').valueAsDate = new Date();
+
+    // Fungsi format rupiah
+    function formatRupiah(number) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+    }
+
+    // Periksa apakah sudah login atau belum
+    function checkLogin() {
+        if (loggedIn) {
+            showMainPage();
+        } else {
+            showHomePage();
+        }
+    }
+
+    // Tampilkan halaman awal
+    function showHomePage() {
+        homePage.style.display = 'flex';
+        loginPage.style.display = 'none';
+        mainPage.style.display = 'none';
+    }
+
+    // Tampilkan halaman login
+    function showLogin() {
+        homePage.style.display = 'none';
+        loginPage.style.display = 'block';
+        mainPage.style.display = 'none';
+    }
+
+    // Tampilkan halaman utama
+    function showMainPage() {
+        homePage.style.display = 'none';
+        loginPage.style.display = 'none';
+        mainPage.style.display = 'block';
+        renderRecords();
+    }
+
+    // Toggle menu hamburger
+    function toggleMenu() {
+        if (menu.style.display === 'block') {
+            menu.style.display = 'none';
+        } else {
+            menu.style.display = 'block';
+        }
+    }
+
+    // Fungsi login sederhana (tidak aman, hanya contoh)
+    function login() {
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!email || !password) {
+            alert('Harap isi email dan sandi.');
+            return;
+        }
+
+        // Simpan status login
+        loggedIn = true;
+        localStorage.setItem('loggedIn', 'true');
+
+        // Bersihkan input
+        emailInput.value = '';
+        passwordInput.value = '';
+        menu.style.display = 'none';
+
+        showMainPage();
+    }
+
+    // Fungsi logout
+    function logout() {
+        if (confirm('Anda yakin ingin logout?')) {
+            loggedIn = false;
+            localStorage.setItem('loggedIn', 'false');
+            menu.style.display = 'none';
+            showHomePage();
+        }
+    }
+
+    // Simpan records ke localStorage
+    function saveRecords() {
+        localStorage.setItem('keuanganRecords', JSON.stringify(records));
+    }
+
+    // Render data keuangan ke tabel
+    function renderRecords() {
+        // Urut berdasarkan tanggal terbaru
+        records.sort((a,b) => new Date(b.date) - new Date(a.date));
+        recordsTableBody.innerHTML = '';
+
+        records.forEach((record, index) => {
+            const tr = document.createElement('tr');
+
+            const dateTd = document.createElement('td');
+            dateTd.textContent = new Date(record.date).toLocaleDateString('id-ID');
+            tr.appendChild(dateTd);
+
+            const typeTd = document.createElement('td');
+            typeTd.textContent = record.type === 'income' ? 'Pemasukan' : 'Pengeluaran';
+            tr.appendChild(typeTd);
+
+            const descTd = document.createElement('td');
+            descTd.textContent = record.description;
+            tr.appendChild(descTd);
+
+            const amountTd = document.createElement('td');
+            amountTd.textContent = formatRupiah(record.amount);
+            amountTd.classList.add('amount');
+            amountTd.classList.add(record.type === 'income' ? 'income' : 'expense');
+            tr.appendChild(amountTd);
+
+            const actionTd = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Hapus';
+            deleteBtn.style.backgroundColor = '#dc3545';
+            deleteBtn.style.color = 'white';
+            deleteBtn.style.padding = '5px 10px';
+            deleteBtn.style.border = 'none';
+            deleteBtn.style.borderRadius = '4px';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.onclick = () => {
+                if (confirm('Yakin ingin menghapus catatan ini?')) {
+                    records.splice(index,1);
+                    saveRecords();
+                    renderRecords();
+                }
+            };
+            actionTd.appendChild(deleteBtn);
+            tr.appendChild(actionTd);
+
+            recordsTableBody.appendChild(tr);
+        });
+
+        updateSummary();
+    }
+
+    // Update ringkasan pemasukan, pengeluaran, dan saldo
+    function updateSummary() {
+        const totalIncome = records.filter(r => r.type === 'income').reduce((sum,r) => sum + r.amount,0);
+        const totalExpense = records.filter(r => r.type === 'expense').reduce((sum,r) => sum + r.amount,0);
+        const balance = totalIncome - totalExpense;
+        totalIncomeEl.textContent = formatRupiah(totalIncome);
+        totalExpenseEl.textContent = formatRupiah(totalExpense);
+        balanceEl.textContent = formatRupiah(balance);
+    }
+
+    // Tangani submit form penambahan catatan
+    document.getElementById('record-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const type = document.getElementById('type').value;
+        const description = document.getElementById('description').value.trim();
+        const amount = parseFloat(document.getElementById('amount').value);
+        const date = document.getElementById('date').value;
+
+        if (!description || !date || isNaN(amount) || amount <= 0) {
+            alert('Mohon isi semua data dengan benar.');
+            return;
+        }
+
+        records.push({type, description, amount, date});
+        saveRecords();
+        renderRecords();
+
+        // Reset form dan atur tanggal input ke hari ini
+        e.target.reset();
+        e.target.date.valueAsDate = new Date();
+    });
+
+    // Fungsi salin semua data ke clipboard
+    function copyAllData() {
+        if (records.length === 0) {
+            alert('Belum ada data yang bisa disalin.');
+            return;
+        }
+
+        let textToCopy = 'Tanggal\tTipe\tKeterangan\tJumlah (Rp)\n';
+        records.forEach(record => {
+            const dateStr = new Date(record.date).toLocaleDateString('id-ID');
+            const typeStr = record.type === 'income' ? 'Pemasukan' : 'Pengeluaran';
+            const amountStr = record.amount.toLocaleString('id-ID', {minimumFractionDigits: 0});
+            textToCopy += `${dateStr}\t${typeStr}\t${record.description}\t${amountStr}\n`;
+        });
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            copyMessage.style.display = 'block';
+            setTimeout(() => copyMessage.style.display = 'none', 3000);
+        }).catch(err => {
+            alert('Gagal menyalin data: ' + err);
+        });
+    }
+
+    // Inisialisasi tampilan sesuai status login
+    checkLogin();
+
+    // sembunyikan menu saat klik di luar menu/hamburger
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+            menu.style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>
+
+```
+
